@@ -7,7 +7,7 @@ import time
 from subprocess import Popen, PIPE
 
 # constants
-ARCHWAY_DECIMALS = 100000
+ARCHWAY_DECIMALS = 1000000
 TRANSACTION_WAIT_TIME = 10
 
 class ArchwayAutodelegation():
