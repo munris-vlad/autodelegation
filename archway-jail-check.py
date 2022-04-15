@@ -6,10 +6,6 @@ import getpass
 import time 
 from subprocess import Popen, PIPE
 
-# constants
-ARCHWAY_DECIMALS = 1000000
-TRANSACTION_WAIT_TIME = 10
-
 class ArchwayJailCheck():
     def __init__( self, config_file='config.ini' ):
         # obtain the host name
@@ -56,7 +52,6 @@ class ArchwayJailCheck():
         '''
         Setup archway info
         '''
-
         # sleep time between delegation cycles
         if "SLEEP_TIME" in os.environ:
             self.sleep_time = int(os.environ['SLEEP_TIME'])
@@ -64,49 +59,12 @@ class ArchwayJailCheck():
             self.sleep_time = int(self.config['ARCHWAY']['sleep_time'])
         else:
             self.sleep_time = 600
-        
-        # bank reserve
-        if "ARCHWAY_RESERVE" in os.environ:
-            self.reserve = float(os.environ['ARCHWAY_RESERVE'])
-        elif 'reserve' in self.config['ARCHWAY']:
-            self.reserve = float(self.config['ARCHWAY']['reserve'])
-        else:
-            self.reserve = 0.1000
-
-        # Prompt for the password if not in environment
-        if "ARCHWAY_PASSWORD" in os.environ:
-            self.password = os.environ['ARCHWAY_PASSWORD']
-        elif 'password' in self.config['ARCHWAY']:
-            self.password = self.config['ARCHWAY']['password']
-        else:
-            self.password = getpass.getpass("Enter the wallet password: ")
 
         # chain id
         if "CHAIN_ID" in os.environ:
             self.chain_id = os.environ['CHAIN_ID']
         else:
             self.chain_id = self.config['ARCHWAY']['chain_id']
-
-        # wallet name
-        if "WALLET_NAME" in os.environ:
-            self.wallet_name = os.environ['WALLET_NAME']
-        elif "WALLETNAME" in os.environ:
-            self.wallet_name = os.environ['WALLETNAME']
-        else:
-            self.wallet_name = self.config['ARCHWAY']['wallet_name']
-        
-        # wallet and validator keys
-        if "WALLET_KEY" in os.environ:
-            self.wallet_key = os.environ['WALLET_KEY']
-        elif 'wallet_key' in self.config['ARCHWAY']:
-            self.wallet_key = self.config['ARCHWAY']['wallet_key']
-        elif "WALLET_ADDRESS" in os.environ:
-            self.wallet_key = os.environ['WALLET_ADDRESS']
-        elif 'wallet_address' in self.config['ARCHWAY']:
-            self.wallet_key = self.config['ARCHWAY']['wallet_address']
-        else:
-            print('Unable to find the wallet address in the configuration file. Exiting...')
-            exit()
 
         if "VALIDATOR_KEY" in os.environ:
             self.validator_key = os.environ['VALIDATOR_KEY']
@@ -146,7 +104,7 @@ class ArchwayJailCheck():
         status = line.split(': ')[1]
         return status
 
-    def delegation_cycle( self ):
+    def check_cycle( self ):
         '''
         Delegation cycle for distributing rewards and sending them out
         '''
@@ -162,7 +120,7 @@ def parse_arguments( ):
     '''
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', '-c', type=str, required=False, default='config.ini', help='Configuration File')
+    parser.add_argument('--config', '-c', type=str, required=False, default='jail-check-config.ini', help='Configuration File')
     return parser.parse_args()
 
 # Parse arguments
@@ -173,4 +131,4 @@ archway_bot = ArchwayJailCheck( args.config )
 
 # run periodic delegation cycle
 while True:
-    archway_bot.delegation_cycle()
+    archway_bot.check_cycle()
