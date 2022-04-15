@@ -139,23 +139,11 @@ class ArchwayJailCheck():
             if keyword in line:
                 return line
     
-    def shares_to_decimal( self, shares ):
-        '''
-        return the share to decimal conversion
-        '''
-        return float( shares ) * ( 1/ARCHWAY_DECIMALS )
-
-    def decimal_to_shares( self, amount ):
-        '''
-        return the decimal to shares conversion
-        '''
-        return int( amount * ARCHWAY_DECIMALS )
-
     def get_status( self ):
         '''
         Obtain the ARCHWAY status
         '''
-        proc = Popen([ f"query staking validator {self.validator_address}" ], stdout=PIPE, shell=True)
+        proc = Popen([ f"query staking validator {self.validator_key}" ], stdout=PIPE, shell=True)
         (out, err) = proc.communicate()
         line = self.parse_subprocess( out, 'jailed' )
         status = line.split(': ')[1]
@@ -167,7 +155,7 @@ class ArchwayJailCheck():
         '''
         status = self.get_status()
         if (status == 'true'):
-            self.send( f" - New Delegation: { new_delegations } ( Delta: { new_delegations - curr_delegations } )" )
+            self.send( f" Archway node jailed" )
         # self.send( f"Sleeping { self.sleep_time } Seconds\n" )
         time.sleep( self.sleep_time )
 
