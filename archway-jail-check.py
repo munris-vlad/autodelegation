@@ -19,9 +19,6 @@ class ArchwayJailCheck():
         self.read_config( config_file )
         self.setup_telegram()
         self.setup_archway_info()
-
-        # send the hello message
-        self.send( f'Hello from ARCHWAY Autodelegation Bot on {self.name}!' )
         
     def read_config( self, config_file ):
         '''
@@ -143,7 +140,7 @@ class ArchwayJailCheck():
         '''
         Obtain the ARCHWAY status
         '''
-        proc = Popen([ f"query staking validator {self.validator_key}" ], stdout=PIPE, shell=True)
+        proc = Popen([ f"archwayd query staking validator {self.validator_key}" ], stdout=PIPE, shell=True)
         (out, err) = proc.communicate()
         line = self.parse_subprocess( out, 'jailed' )
         status = line.split(': ')[1]
