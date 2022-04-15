@@ -144,7 +144,7 @@ class ArchwayJailCheck():
         (out, err) = proc.communicate()
         line = self.parse_subprocess( out, 'jailed' )
         status = line.split(': ')[1]
-        return int( status )
+        return status
 
     def delegation_cycle( self ):
         '''
