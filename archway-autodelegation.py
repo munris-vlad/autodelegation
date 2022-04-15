@@ -191,7 +191,7 @@ class ArchwayAutodelegation():
         '''
         Delegate the amount to the validator
         '''
-        child = pexpect.spawn( f'archwayd tx staking delegate { self.validator_key } { amount }uaugust --from { self.wallet_name } --chain-id { self.chain_id } -y', timeout=10)
+        child = pexpect.spawn( f'archwayd tx staking delegate { self.validator_key } { amount }utorii --from { self.wallet_name } --chain-id { self.chain_id } -y', timeout=10)
         child.expect( b'Enter keyring passphrase:' ) 
         child.sendline( self.password )   
         child.expect( pexpect.EOF )                                                                                                                                     

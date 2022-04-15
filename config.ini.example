@@ -1,5 +1,5 @@
 [ARCHWAY]
-chain_id = augusta-1
+chain_id = torii-1
 wallet_name = <wallet name>
 wallet_address = <wallet address>
 validator_address = <validator address>
