@@ -1,8 +1,0 @@
-[ARCHWAY]
-chain_id = torii-1
-validator_address = <validator address>
-sleep_time = <sleep time between delegation cycles in seconds - default 600 seconds>
-
-[Telegram]
-telegram_token = <telegram bot token>
-telegram_chat_id = <telegram chat id>
