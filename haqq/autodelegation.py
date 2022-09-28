@@ -7,7 +7,7 @@ import time
 from subprocess import Popen, PIPE
 
 # constants
-REBUS_DECIMALS = 1000000000000000000
+HAQQ_DECIMALS = 1000000000000000000
 TRANSACTION_WAIT_TIME = 10
 
 class HaqqAutodelegation():
@@ -18,7 +18,7 @@ class HaqqAutodelegation():
         # read the config and setup the telegram
         self.read_config( config_file )
         self.setup_telegram()
-        self.setup_rebus_info()
+        self.setup_haqq_info()
 
         # send the hello message
         self.send( f'Hello from HAQQ Autodelegation Bot on {self.name}!' )
