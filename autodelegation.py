@@ -40,12 +40,12 @@ class Autodelegation():
         '''
         Setup telegram
         '''
-        if "TELEGRAM_TOKEN" in os.environ:
+        if "TELEGRAM_TOKEN" in os.environ['VARIABLES']:
             self.telegram_token = os.environ['VARIABLES']['TELEGRAM_TOKEN']
         else:
             self.telegram_token = None
         
-        if "TELEGRAM_CHAT_ID" in os.environ:
+        if "TELEGRAM_CHAT_ID" in os.environ['VARIABLES']:
             self.telegram_chat_id = os.environ['VARIABLES']['TELEGRAM_CHAT_ID']
         else:
             self.telegram_chat_id = None
@@ -55,49 +55,49 @@ class Autodelegation():
         Setup info
         '''
 
-        if "TIKER" in os.environ:
+        if "TIKER" in os.environ['VARIABLES']:
             self.tiker = os.environ['VARIABLES']['TIKER']
 
-        if "TOKEN" in os.environ:
+        if "TOKEN" in os.environ['VARIABLES']:
             self.token = os.environ['VARIABLES']['TOKEN']
 
-        if "DECIMALS" in os.environ:
+        if "DECIMALS" in os.environ['VARIABLES']:
             self.decimals = os.environ['VARIABLES']['DECIMALS']
 
         # sleep time between delegation cycles
-        if "SLEEP_TIME" in os.environ:
+        if "SLEEP_TIME" in os.environ['VARIABLES']:
             self.sleep_time = int(os.environ['VARIABLES']['SLEEP_TIME'])
         else:
             self.sleep_time = 600
         
         # bank reserve
-        if "RESERVE" in os.environ:
+        if "RESERVE" in os.environ['VARIABLES']:
             self.reserve = float(os.environ['VARIABLES']['RESERVE'])
         else:
             self.reserve = 0.1000
 
         # Prompt for the password if not in environment
-        if "PASSWORD" in os.environ:
+        if "PASSWORD" in os.environ['VARIABLES']:
             self.password = os.environ['VARIABLES']['PASSWORD']
         else:
             self.password = getpass.getpass("Enter the wallet password: ")
 
         # chain id
-        if "CHAIN" in os.environ:
+        if "CHAIN" in os.environ['VARIABLES']:
             self.chain = os.environ['VARIABLES']['CHAIN']
 
         # wallet name
-        if "WALLET_NAME" in os.environ:
+        if "WALLET_NAME" in os.environ['VARIABLES']:
             self.wallet_name = os.environ['VARIABLES']['WALLET_NAME']
         
         # wallet and validator keys
-        if "WALLET_ADDRESS" in os.environ:
+        if "WALLET_ADDRESS" in os.environ['VARIABLES']:
             self.wallet_key = os.environ['VARIABLES']['WALLET_ADDRESS']
         else:
             print('Unable to find the wallet address in the configuration file. Exiting...')
             exit()
 
-        if "VALIDATOR_ADDRESS" in os.environ:
+        if "VALIDATOR_ADDRESS" in os.environ['VARIABLES']:
             self.validator_key = os.environ['VARIABLES']['VALIDATOR_ADDRESS']
         else:
             print('Unable to find the validator address in the configuration file. Exiting...')
