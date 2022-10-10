@@ -1,15 +1,18 @@
-# empower-autodelegation
-Empower Autodelegation
+# autodelegation
+Autodelegation script
 
 The config.ini can be used for loading in the variables or the user's environmental variables may be utilized.
 
 Environmental Variables:
-- `CHAIN_ID`: Chain ID
+- `TIKER`: Binary name
+- `TOKEN`: Network token
+- `DECIMALS`: Network token
+- `CHAIN`: Chain
 - `WALLET_NAME`: Wallet Name
 - `WALLET_ADDRESS`: Wallet Address
 - `VALIDATOR_ADDRESS`: Validator Address
 - `PASSWORD`: Wallet Password
-- `RESERVE`: The balance of empower to maintain in the wallet in decimal
+- `RESERVE`: The balance of archway to maintain in the wallet in decimal
 - `TELEGRAM_TOKEN`: Telegram Token
 - `TELEGRAM_CHAT_ID`: Telegram Chat ID
 - `SLEEP_TIME`: Sleep Time for Delegation Cycles

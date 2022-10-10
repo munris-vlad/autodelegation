@@ -7,10 +7,9 @@ import time
 from subprocess import Popen, PIPE
 
 # constants
-EMPOWER_DECIMALS = 1000000
 TRANSACTION_WAIT_TIME = 10
 
-class EmpowerAutodelegation():
+class Autodelegation():
     def __init__( self, config_file='config.ini' ):
         # obtain the host name
         self.name = os.uname()[1]
@@ -18,10 +17,10 @@ class EmpowerAutodelegation():
         # read the config and setup the telegram
         self.read_config( config_file )
         self.setup_telegram()
-        self.setup_empowerinfo()
+        self.setup_info()
 
         # send the hello message
-        self.send( f'Hello from EMPOWER Autodelegation Bot on {self.name}!' )
+        self.send( f'Hello from Autodelegation Bot on {self.name}!' )
         
     def read_config( self, config_file ):
         '''
@@ -43,82 +42,63 @@ class EmpowerAutodelegation():
         '''
         if "TELEGRAM_TOKEN" in os.environ:
             self.telegram_token = os.environ['TELEGRAM_TOKEN']
-        elif 'Telegram' in self.config and 'telegram_token' in self.config['Telegram']:
-            self.telegram_token = self.config['Telegram']['telegram_token']
         else:
             self.telegram_token = None
         
         if "TELEGRAM_CHAT_ID" in os.environ:
             self.telegram_chat_id = os.environ['TELEGRAM_CHAT_ID']
-        elif 'Telegram' in self.config and 'telegram_chat_id' in self.config['Telegram']:
-            self.telegram_chat_id = self.config['Telegram']['telegram_chat_id']
         else:
             self.telegram_chat_id = None
 
-    def setup_empowerinfo( self ):
+    def setup_info( self ):
         '''
-        Setup empower info
+        Setup info
         '''
+
+        if "TIKER" in os.environ:
+            self.tiker = os.environ['TIKER']
+
+        if "TOKEN" in os.environ:
+            self.token = os.environ['TOKEN']
+
+        if "DECIMALS" in os.environ:
+            self.decimals = os.environ['DECIMALS']
 
         # sleep time between delegation cycles
         if "SLEEP_TIME" in os.environ:
             self.sleep_time = int(os.environ['SLEEP_TIME'])
-        elif 'sleep_time' in self.config['EMPOWER']:
-            self.sleep_time = int(self.config['EMPOWER']['sleep_time'])
         else:
             self.sleep_time = 600
         
         # bank reserve
-        if "EMPOWER_RESERVE" in os.environ:
-            self.reserve = float(os.environ['EMPOWER_RESERVE'])
-        elif 'reserve' in self.config['EMPOWER']:
-            self.reserve = float(self.config['EMPOWER']['reserve'])
+        if "RESERVE" in os.environ:
+            self.reserve = float(os.environ['RESERVE'])
         else:
             self.reserve = 0.1000
 
         # Prompt for the password if not in environment
-        if "EMPOWER_PASSWORD" in os.environ:
-            self.password = os.environ['EMPOWER_PASSWORD']
-        elif 'password' in self.config['EMPOWER']:
-            self.password = self.config['EMPOWER']['password']
+        if "PASSWORD" in os.environ:
+            self.password = os.environ['PASSWORD']
         else:
             self.password = getpass.getpass("Enter the wallet password: ")
 
         # chain id
-        if "CHAIN_ID" in os.environ:
-            self.chain_id = os.environ['CHAIN_ID']
-        else:
-            self.chain_id = self.config['EMPOWER']['chain_id']
+        if "CHAIN" in os.environ:
+            self.chain = os.environ['CHAIN']
 
         # wallet name
         if "WALLET_NAME" in os.environ:
             self.wallet_name = os.environ['WALLET_NAME']
-        elif "WALLETNAME" in os.environ:
-            self.wallet_name = os.environ['WALLETNAME']
-        else:
-            self.wallet_name = self.config['EMPOWER']['wallet_name']
         
         # wallet and validator keys
-        if "WALLET_KEY" in os.environ:
-            self.wallet_key = os.environ['WALLET_KEY']
-        elif 'wallet_key' in self.config['EMPOWER']:
-            self.wallet_key = self.config['EMPOWER']['wallet_key']
-        elif "WALLET_ADDRESS" in os.environ:
+        if "WALLET_ADDRESS" in os.environ:
             self.wallet_key = os.environ['WALLET_ADDRESS']
-        elif 'wallet_address' in self.config['EMPOWER']:
-            self.wallet_key = self.config['EMPOWER']['wallet_address']
         else:
             print('Unable to find the wallet address in the configuration file. Exiting...')
             exit()
 
-        if "VALIDATOR_KEY" in os.environ:
-            self.validator_key = os.environ['VALIDATOR_KEY']
-        elif 'validator_key' in self.config['EMPOWER']:
-            self.validator_key = self.config['EMPOWER']['validator_key']
-        elif "VALIDATOR_ADDRESS" in os.environ:
+        if "VALIDATOR_ADDRESS" in os.environ:
             self.validator_key = os.environ['VALIDATOR_ADDRESS']
-        elif 'validator_address' in self.config['EMPOWER']:
-            self.validator_key = self.config['EMPOWER']['validator_address']
         else:
             print('Unable to find the validator address in the configuration file. Exiting...')
             exit()
@@ -143,19 +123,19 @@ class EmpowerAutodelegation():
         '''
         return the share to decimal conversion
         '''
-        return float( shares ) * ( 1/EMPOWER_DECIMALS )
+        return float( shares ) * ( 1/self.decimals )
 
     def decimal_to_shares( self, amount ):
         '''
         return the decimal to shares conversion
         '''
-        return int( amount * EMPOWER_DECIMALS )
+        return int( amount * self.decimals )
 
     def get_balance( self ):
         '''
-        Obtain the EMPOWER balance
+        Obtain the balance
         '''
-        proc = Popen([ f"empowerd q bank balances {self.wallet_key}" ], stdout=PIPE, shell=True)
+        proc = Popen([ f"{ self.tiker } q bank balances {self.wallet_key}" ], stdout=PIPE, shell=True)
         (out, err) = proc.communicate()
         line = self.parse_subprocess( out, 'amount' )
         balance = line.split('"')[1]
@@ -165,7 +145,7 @@ class EmpowerAutodelegation():
         '''
         Distribute the rewards from the validator and return the hash
         '''
-        child = pexpect.spawn(f"empowerd tx distribution withdraw-rewards { self.validator_key } --chain-id={ self.chain_id } --from {self.wallet_name} -y", timeout=10)
+        child = pexpect.spawn(f"{ self.tiker } tx distribution withdraw-rewards { self.validator_key } --chain-id={ self.chain } --from {self.wallet_name} -y", timeout=10)
         child.expect( b'Enter keyring passphrase:' ) 
         child.sendline( self.password )   
         child.expect( pexpect.EOF )                                                                                                                                     
@@ -176,9 +156,9 @@ class EmpowerAutodelegation():
 
     def distribute_rewards_commission( self ):
         '''
-        Distribute the comission for the validator and return the hash
+        Distribute the commission for the validator and return the hash
         '''
-        child = pexpect.spawn(f"empowerd tx distribution withdraw-rewards { self.validator_key } --chain-id={ self.chain_id } --from {self.wallet_name} --commission -y", timeout=10)
+        child = pexpect.spawn(f"{ self.tiker } tx distribution withdraw-rewards { self.validator_key } --chain-id={ self.chain } --from {self.wallet_name} --commission -y", timeout=10)
         child.expect( b'Enter keyring passphrase:' ) 
         child.sendline( self.password )   
         child.expect( pexpect.EOF )                                                                                                                                     
@@ -191,7 +171,7 @@ class EmpowerAutodelegation():
         '''
         Delegate the amount to the validator
         '''
-        child = pexpect.spawn( f'empowerd tx staking delegate { self.validator_key } { amount }umpwr --from { self.wallet_name } --chain-id { self.chain_id } -y', timeout=10)
+        child = pexpect.spawn( f'{ self.tiker } tx staking delegate { self.validator_key } { amount }{ self.token } --from { self.wallet_name } --chain-id { self.chain } -y', timeout=10)
         child.expect( b'Enter keyring passphrase:' ) 
         child.sendline( self.password )   
         child.expect( pexpect.EOF )                                                                                                                                     
@@ -204,7 +184,7 @@ class EmpowerAutodelegation():
         '''
         Obtain the delegation amount for the validator
         '''
-        proc = Popen([ f"empowerd q staking delegations-to {self.validator_key} --chain-id={self.chain_id}" ], stdout=PIPE, shell=True)
+        proc = Popen([ f"{ self.tiker } q staking delegations-to {self.validator_key} --chain-id={self.chain}" ], stdout=PIPE, shell=True)
         (out, err) = proc.communicate()
         line = self.parse_subprocess( out, 'shares' )
         balance = self.shares_to_decimal( line.split('"')[1].split(".")[0]) 
@@ -258,8 +238,8 @@ def parse_arguments( ):
 args = parse_arguments()
 
 # Create the object
-empowerbot = EmpowerAutodelegation( args.config )
+bot = Autodelegation( args.config )
 
 # run periodic delegation cycle
 while True:
-    empowerbot.delegation_cycle()
+    bot.delegation_cycle()

@@ -1,0 +1,12 @@
+TIKER = <tiker>
+TOKEN = <token>
+CHAIN = <chain>
+DECIMALS = 1000000000000000000
+WALLET_NAME = <wallet name>
+WALLET_ADDRESS = <wallet address>
+VALIDATOR_ADDRESS = <validator address>
+RESERVE = <balance in decimal to hold in reserve - default 0.1 >
+PASSWORD = <wallet password>
+SLEEP_TIME = <sleep time between delegation cycles in seconds - default 600 seconds>
+TELEGRAM_TOKEN = <telegram bot token>
+TELEGRAM_CHAT_ID = <telegram chat id>
